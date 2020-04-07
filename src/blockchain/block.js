@@ -22,6 +22,7 @@ class Block {
 
     /**
      * Create genesis block
+     *
      * @returns {Block}
      */
     static genesis() {
@@ -30,17 +31,19 @@ class Block {
 
     /**
      * Hash the data
+     *
      * @param timestamp
      * @param lastHash
      * @param data
      * @returns {*}
      */
-    static hash(timestamp,lastHash,data){
+    static hash(timestamp, lastHash, data) {
         return SHA256(`${timestamp}${lastHash}${data}`).toString();
     }
 
     /**
      * Create new block instance
+     *
      * @param lastBlock
      * @param data
      * @returns {Block}
@@ -52,6 +55,18 @@ class Block {
         hash = Block.hash(timestamp, lastHash, data);
 
         return new this(timestamp, lastHash, hash, data);
+    }
+
+    /**
+     * Hash the block
+     *
+     * @param block
+     * @returns {*}
+     */
+    static blockHash(block) {
+        //destructuring
+        const {timestamp, lastHash, data} = block;
+        return Block.hash(timestamp, lastHash, data);
     }
 }
 
