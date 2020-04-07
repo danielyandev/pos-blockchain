@@ -1,6 +1,7 @@
 const express = require('express');
-const Blockchain = require('./src/blockchain/blockchain');
 const bodyParser = require('body-parser');
+const Blockchain = require('./src/blockchain/blockchain');
+const P2pServer = require('./src/p2p/server');
 
 //get the port from the user or set the default port
 const HTTP_PORT = process.env.HTTP_PORT || 3000;
@@ -13,6 +14,10 @@ app.use(bodyParser.json());
 
 // create a new blockchain instance
 const blockchain = new Blockchain();
+
+const p2pServer = new P2pServer(blockchain);
+
+p2pServer.listen();
 
 
 
@@ -31,9 +36,7 @@ const blockchain = new Blockchain();
  * Get full chain
  */
 app.get('/chain', (req, res) => {
-
     res.json(blockchain.chain);
-
 });
 
 app.listen(HTTP_PORT, () => {

@@ -25,8 +25,13 @@ class Blockchain {
      * @returns {boolean}
      */
     isValidChain(chain) {
-        if (JSON.stringify(chain[0]) !== JSON.stringify(Block.genesis()))
+        if (JSON.stringify(chain[0]) !== JSON.stringify(Block.genesis())){
+            console.log('Genesis does not match')
+            console.log(JSON.stringify(chain[0]))
+            console.log(Block.genesis())
             return false;
+        }
+
 
         for (let i = 1; i < chain.length; i++) {
             const block = chain[i];

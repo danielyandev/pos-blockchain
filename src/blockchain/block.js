@@ -26,7 +26,7 @@ class Block {
      * @returns {Block}
      */
     static genesis() {
-        return new this(Date.now(), "no-last-hash", "genesis-hash", []);
+        return new this("genesis-timestamp", "no-last-hash", "genesis-hash", []);
     }
 
     /**
