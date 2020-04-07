@@ -1,4 +1,5 @@
-const SHA256 = require('crypto-js/sha256');
+const Helper = require("../helpers/helper");
+
 
 class Block {
     constructor(timestamp, lastHash, hash, transactions, validator, signature) {
@@ -38,7 +39,7 @@ class Block {
      * @returns {*}
      */
     static hash(timestamp, lastHash, data) {
-        return SHA256(`${timestamp}${lastHash}${data}`).toString();
+        return Helper.hash(`${timestamp}${lastHash}${data}`);
     }
 
     /**

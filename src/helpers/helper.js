@@ -1,5 +1,6 @@
 const EDDSA = require("elliptic").eddsa;
 const eddsa = new EDDSA("ed25519");
+const SHA256 = require('crypto-js/sha256');
 
 class Helper {
     /**
@@ -14,10 +15,25 @@ class Helper {
 
     /**
      * Get uuid V4
+     *
      * @returns {*}
      */
     static id() {
         return uuidv4();
+    }
+
+    /**
+     * Hash the data
+     *
+     * @param data
+     * @returns {*}
+     */
+    static hash(data){
+        return SHA256(JSON.stringify(data)).toString();
+    }
+
+    static verifySignature(publicKey, signature, dataHash) {
+        return eddsa.keyFromPublic(publicKey).verify(dataHash, signature);
     }
 }
 

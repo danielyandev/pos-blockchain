@@ -12,4 +12,14 @@ class Wallet {
         publicKey: ${this.publicKey.toString()}
         balance  : ${this.balance}`;
     }
+
+    /**
+     * Sign the data
+     *
+     * @param dataHash
+     * @returns {Buffer | Signature | string | undefined | number | PromiseLike<ArrayBuffer>}
+     */
+    sign(dataHash){
+        return this.keyPair.sign(dataHash).toHex();
+    }
 }
