@@ -24,6 +24,7 @@ class Blockchain {
      * @returns {Block}
      */
     addBlock(block) {
+        this.executeTransactions(block)
         this.chain.push(block);
 
         return block;
