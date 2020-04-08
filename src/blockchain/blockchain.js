@@ -1,8 +1,10 @@
 const Block = require('./block');
+const Account = require("./account");
 
 class Blockchain {
     constructor() {
         this.chain = [Block.genesis()];
+        this.account = new Account()
     }
 
     /**
@@ -61,6 +63,16 @@ class Blockchain {
 
         console.log("Replacing the current chain with new chain");
         this.chain = newChain;
+    }
+
+    /**
+     * Get balance using public key
+     *
+     * @param publicKey
+     * @returns {*}
+     */
+    getBalance(publicKey) {
+        return this.account.getBalance(publicKey);
     }
 }
 
