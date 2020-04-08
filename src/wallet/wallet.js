@@ -57,6 +57,14 @@ class Wallet {
     getBalance(blockchain) {
         return blockchain.getBalance(this.publicKey);
     }
+
+    /**
+     *
+     * @returns {*}
+     */
+    getPublicKey() {
+        return this.publicKey;
+    }
 }
 
 module.exports = Wallet

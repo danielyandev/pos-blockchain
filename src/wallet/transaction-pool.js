@@ -14,7 +14,7 @@ class TransactionPool {
      */
     addTransaction(transaction) {
         this.transactions.push(transaction);
-        return this.transactions.length >= TRANSACTIONS_PER_BLOCK;
+        return this.thresholdReached();
 
     }
 
@@ -49,6 +49,10 @@ class TransactionPool {
      */
     clear() {
         this.transactions = [];
+    }
+
+    thresholdReached() {
+        return this.transactions.length >= TRANSACTIONS_PER_BLOCK;
     }
 }
 

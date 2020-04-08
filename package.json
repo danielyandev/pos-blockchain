@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon ./main.js",
-    "main_node": "HTTP_PORT=3000 P2P_PORT=5000 npm run dev",
+    "ico": "HTTP_PORT=3000 P2P_PORT=5000 nodemon ./ico",
     "node1": "HTTP_PORT=3001 P2P_PORT=5001 PEERS=wc://localhost:5000 npm run dev",
-    "node2": "HTTP_PORT=3002 P2P_PORT=5002 PEERS=wc://localhost:5001 npm run dev",
-    "node3": "HTTP_PORT=3003 P2P_PORT=5003 PEERS=wc://localhost:5002 npm run dev",
+    "node2": "HTTP_PORT=3002 P2P_PORT=5002 PEERS=wc://localhost:5000,wc://localhost:5001 npm run dev",
+    "node3": "HTTP_PORT=3003 P2P_PORT=5003 PEERS=wc://localhost:5001,wc://localhost:5002 npm run dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

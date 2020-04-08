@@ -66,8 +66,19 @@ app.post("/transact", (req, res) => {
         blockchain,
         transactionPool
     );
-    p2pServer.broadcastTransaction(transaction);
-    res.json(transaction);
+    if (transaction){
+        p2pServer.broadcastTransaction(transaction);
+        res.json(transaction);
+    }else{
+        res.json({"error": "Transaction was not transfered"})
+    }
+});
+
+/**
+ * Get public key
+ */
+app.get("/public-key", (req, res) => {
+    res.json({ publicKey: wallet.publicKey });
 });
 
 app.listen(HTTP_PORT, () => {

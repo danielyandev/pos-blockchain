@@ -35,32 +35,32 @@ class Block {
      *
      * @param timestamp
      * @param lastHash
-     * @param data
+     * @param transactions
      * @returns {*}
      */
-    static hash(timestamp, lastHash, data) {
-        return Helper.hash(`${timestamp}${lastHash}${data}`);
+    static hash(timestamp, lastHash, transactions) {
+        return Helper.hash(`${timestamp}${lastHash}${transactions}`);
     }
 
     /**
      * Create new block instance
      *
      * @param lastBlock
-     * @param data
+     * @param transactions
      * @param wallet
      * @returns {Block}
      */
-    static createBlock(lastBlock, data, wallet) {
+    static createBlock(lastBlock, transactions, wallet) {
         let timestamp = Date.now();
         const lastHash = lastBlock.hash;
-        let hash = Block.hash(timestamp, lastHash, data);
+        let hash = Block.hash(timestamp, lastHash, transactions);
 
         // get the validators public key
         let validator = wallet.getPublicKey();
 
         // Sign the block
         let signature = Block.signBlockHash(hash, wallet);
-        return new this(timestamp, lastHash, hash, data, validator, signature);
+        return new this(timestamp, lastHash, hash, transactions, validator, signature);
     }
 
     /**
@@ -71,8 +71,8 @@ class Block {
      */
     static blockHash(block) {
         //destructuring
-        const {timestamp, lastHash, data} = block;
-        return Block.hash(timestamp, lastHash, data);
+        const {timestamp, lastHash, transactions} = block;
+        return Block.hash(timestamp, lastHash, transactions);
     }
 
     /**
@@ -84,6 +84,29 @@ class Block {
      */
     static signBlockHash(hash, wallet) {
         return wallet.sign(hash);
+    }
+
+    /**
+     *
+     * @param block
+     * @returns {*}
+     */
+    static verifyBlock(block) {
+        return Helper.verifySignature(
+            block.validator,
+            block.signature,
+            Block.hash(block.timestamp, block.lastHash, block.transactions)
+        );
+    }
+
+    /**
+     *
+     * @param block
+     * @param leader
+     * @returns {boolean}
+     */
+    static verifyLeader(block, leader) {
+        return block.validator === leader;
     }
 }
 

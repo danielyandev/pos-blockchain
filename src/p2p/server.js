@@ -81,32 +81,31 @@ class P2pServer {
         //on recieving a message execute a callback function
         socket.on('message', message => {
             const data = JSON.parse(message);
-            console.log("data ", data);
             switch (data.type) {
                 case MESSAGE_TYPES.chain:
                     this.blockchain.replaceChain(data.chain);
                     break;
 
                 case MESSAGE_TYPES.block:
+                    console.log('block received')
                     if (this.blockchain.isValidBlock(data.block)) {
-                        this.broadcastBlock(data.block, socket);
+                        this.broadcastBlock(data.block);
                     }
                     break;
 
                 case MESSAGE_TYPES.transaction:
                     if (!this.transactionPool.transactionExists(data.transaction)) {
-                        let thresholdReached = this.transactionPool.addTransaction(data.transaction);
-                        this.broadcastTransaction(data.transaction, socket);
-
-                        if (thresholdReached) {
-                            if (this.blockchain.getLeader() === this.wallet.getPublicKey()) {
-                                console.log("Creating block");
-                                let block = this.blockchain.createBlock(
-                                    this.transactionPool.transactions,
-                                    this.wallet
-                                );
-                                this.broadcastBlock(block, socket);
-                            }
+                        this.transactionPool.addTransaction(data.transaction);
+                        this.broadcastTransaction(data.transaction);
+                    }
+                    if (this.transactionPool.thresholdReached()) {
+                        if (this.blockchain.getLeader() === this.wallet.getPublicKey()) {
+                            console.log("Creating block");
+                            let block = this.blockchain.createBlock(
+                                this.transactionPool.transactions,
+                                this.wallet
+                            );
+                            this.broadcastBlock(block);
                         }
                     }
                     break;
@@ -135,11 +134,9 @@ class P2pServer {
         });
     }
 
-    broadcastTransaction(transaction, except_node = null) {
+    broadcastTransaction(transaction) {
         this.nodes.forEach(node => {
-            if (node !== except_node){
-                this.sendTransaction(node, transaction);
-            }
+            this.sendTransaction(node, transaction);
         });
     }
 
@@ -152,11 +149,9 @@ class P2pServer {
         );
     }
 
-    broadcastBlock(block, except_node = null) {
+    broadcastBlock(block) {
         this.nodes.forEach(node => {
-            if (node !== except_node) {
-                this.sendBlock(node, block);
-            }
+            this.sendBlock(node, block);
         });
     }
 

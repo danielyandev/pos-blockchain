@@ -132,6 +132,7 @@ class Blockchain {
             this.addBlock(block);
             return true;
         } else {
+            console.log("block invalid")
             return false;
         }
     }
@@ -142,7 +143,7 @@ class Blockchain {
      * @param block
      */
     executeTransactions(block) {
-        block.data.forEach(transaction => {
+        block.transactions.forEach(transaction => {
             switch (transaction.type) {
                 case TRANSACTION_TYPES.transaction:
                     this.account.update(transaction);

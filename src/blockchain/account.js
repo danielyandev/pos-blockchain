@@ -1,8 +1,13 @@
+const {INITIAL_COINS} = require("../config");
 
 class Account {
     constructor() {
-        this.addresses = [];
-        this.balance = {};
+        this.addresses = [
+            "88dad1abc1d29bd44190c67d1ba946750d9982ce607552d1721258eafab9a35c"
+        ];
+        this.balance = {
+            "88dad1abc1d29bd44190c67d1ba946750d9982ce607552d1721258eafab9a35c": INITIAL_COINS
+        };
     }
 
     /**
