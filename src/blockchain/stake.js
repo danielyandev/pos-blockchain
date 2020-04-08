@@ -69,6 +69,7 @@ class Stake {
     update(transaction) {
         let amount = transaction.output.amount;
         let from = transaction.input.from;
+        console.log('new amount staked ' + amount)
         this.addStake(from, amount);
     }
 }
