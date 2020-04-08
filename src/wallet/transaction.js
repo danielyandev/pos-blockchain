@@ -41,7 +41,7 @@ class Transaction {
         transaction.type = type;
         transaction.output = {
             to: to,
-            amount: amount - TRANSACTION_FEE,
+            amount: amount,
             fee: TRANSACTION_FEE
         };
         Transaction.signTransaction(transaction, senderWallet);
