@@ -52,8 +52,10 @@ class Stake {
         let balance = -1;
         let leader = undefined;
         addresses.forEach(address => {
-            if (this.getBalance(address) > balance) {
+            let address_balance = this.getBalance(address)
+            if (address_balance > balance) {
                 leader = address;
+                balance = address_balance
             }
         });
         return leader;

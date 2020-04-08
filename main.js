@@ -19,6 +19,7 @@ const blockchain = new Blockchain();
 
 // create a new wallet
 const wallet = new Wallet(Date.now().toString());
+console.log(wallet.getPublicKey())
 
 // create a new transaction pool
 const transactionPool = new TransactionPool();
