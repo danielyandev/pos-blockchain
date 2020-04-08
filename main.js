@@ -24,7 +24,7 @@ const wallet = new Wallet(Date.now().toString());
 const transactionPool = new TransactionPool();
 
 // create a new p2p server instance
-const p2pServer = new P2pServer(blockchain, transactionPool);
+const p2pServer = new P2pServer(blockchain, transactionPool, wallet);
 
 
 /*

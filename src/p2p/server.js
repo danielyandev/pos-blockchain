@@ -8,13 +8,15 @@ const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
 
 const MESSAGE_TYPES = {
     chain: 'CHAIN',
+    block: 'BLOCK',
     transaction: 'TRANSACTION'
 }
 
 class P2pServer {
-    constructor(blockchain, transactionPool) {
+    constructor(blockchain, transactionPool, wallet) {
         this.blockchain = blockchain;
         this.transactionPool = transactionPool;
+        this.wallet = wallet;
         // each node is a socket connection
         this.nodes = [];
     }
@@ -87,8 +89,19 @@ class P2pServer {
 
                 case MESSAGE_TYPES.transaction:
                     if (!this.transactionPool.transactionExists(data.transaction)) {
-                        this.transactionPool.addTransaction(data.transaction);
+                        let thresholdReached = this.transactionPool.addTransaction(data.transaction);
                         this.broadcastTransaction(data.transaction);
+
+                        if (thresholdReached) {
+                            if (this.blockchain.getLeader() === this.wallet.getPublicKey()) {
+                                console.log("Creating block");
+                                let block = this.blockchain.createBlock(
+                                    this.transactionPool.transactions,
+                                    this.wallet
+                                );
+                                this.broadcastBlock(block);
+                            }
+                        }
                     }
                     break;
             }
@@ -127,6 +140,21 @@ class P2pServer {
         socket.send(JSON.stringify({
                 type: MESSAGE_TYPES.transaction,
                 transaction: transaction
+            })
+        );
+    }
+
+    broadcastBlock(block) {
+        this.nodes.forEach(socket => {
+            this.sendBlock(socket, block);
+        });
+    }
+
+    sendBlock(socket, block) {
+        socket.send(
+            JSON.stringify({
+                type: MESSAGE_TYPES.block,
+                block: block
             })
         );
     }

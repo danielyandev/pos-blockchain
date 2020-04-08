@@ -1,14 +1,18 @@
 const Block = require('./block');
 const Account = require("./account");
+const Stake = require("./stake");
+const Validators = require("./validators");
 
 class Blockchain {
     constructor() {
         this.chain = [Block.genesis()];
         this.account = new Account()
+        this.stake = new Stake()
+        this.validators = new Validators()
     }
 
     /**
-     * Add block to the chain
+     * Add block to the chain (received from other nodes)
      *
      * @param data
      * @returns {Block}
@@ -18,6 +22,21 @@ class Blockchain {
         this.chain.push(block);
 
         return block;
+    }
+
+    /**
+     * Create own block
+     *
+     * @param transactions
+     * @param wallet
+     * @returns {Block}
+     */
+    createBlock(transactions, wallet) {
+        return Block.createBlock(
+            this.chain[this.chain.length - 1],
+            transactions,
+            wallet
+        );
     }
 
     /**
@@ -73,6 +92,15 @@ class Blockchain {
      */
     getBalance(publicKey) {
         return this.account.getBalance(publicKey);
+    }
+
+    /**
+     * Get the leader
+     *
+     * @returns {*}
+     */
+    getLeader() {
+        return this.stake.getLeader(this.validators.list);
     }
 }
 

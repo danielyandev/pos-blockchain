@@ -47,15 +47,20 @@ class Block {
      *
      * @param lastBlock
      * @param data
+     * @param wallet
      * @returns {Block}
      */
-    static createBlock(lastBlock, data) {
-        let hash;
+    static createBlock(lastBlock, data, wallet) {
         let timestamp = Date.now();
         const lastHash = lastBlock.hash;
-        hash = Block.hash(timestamp, lastHash, data);
+        let hash = Block.hash(timestamp, lastHash, data);
 
-        return new this(timestamp, lastHash, hash, data);
+        // get the validators public key
+        let validator = wallet.getPublicKey();
+
+        // Sign the block
+        let signature = Block.signBlockHash(hash, wallet);
+        return new this(timestamp, lastHash, hash, data, validator, signature);
     }
 
     /**
@@ -68,6 +73,17 @@ class Block {
         //destructuring
         const {timestamp, lastHash, data} = block;
         return Block.hash(timestamp, lastHash, data);
+    }
+
+    /**
+     * Return wallet sign method
+     *
+     * @param hash
+     * @param wallet
+     * @returns {Buffer | Signature | Buffer | string | number | PromiseLike<ArrayBuffer> | * | PromiseLike<ArrayBuffer>}
+     */
+    static signBlockHash(hash, wallet) {
+        return wallet.sign(hash);
     }
 }
 
