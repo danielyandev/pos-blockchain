@@ -44,6 +44,7 @@ class Transaction {
             amount: amount - TRANSACTION_FEE,
             fee: TRANSACTION_FEE
         };
+        Transaction.signTransaction(transaction, senderWallet);
         return transaction;
     }
 

@@ -1,6 +1,7 @@
 const EDDSA = require("elliptic").eddsa;
 const eddsa = new EDDSA("ed25519");
 const SHA256 = require('crypto-js/sha256');
+const uuidv4 = require("uuid").v4
 
 class Helper {
     /**

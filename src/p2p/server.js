@@ -6,9 +6,16 @@ const P2P_PORT = process.env.P2P_PORT || 5000;
 // list of address to connect to
 const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
 
+const MESSAGE_TYPES = {
+    chain: 'CHAIN',
+    transaction: 'TRANSACTION'
+}
+
 class P2pServer {
-    constructor(blockchain) {
+    constructor(blockchain, transactionPool) {
         this.blockchain = blockchain;
+        this.transactionPool = transactionPool;
+        // each node is a socket connection
         this.nodes = [];
     }
 
@@ -73,7 +80,18 @@ class P2pServer {
         socket.on('message', message => {
             const data = JSON.parse(message);
             console.log("data ", data);
-            this.blockchain.replaceChain(data.chain);
+            switch (data.type) {
+                case MESSAGE_TYPES.chain:
+                    this.blockchain.replaceChain(data.chain);
+                    break;
+
+                case MESSAGE_TYPES.transaction:
+                    if (!this.transactionPool.transactionExists(data.transaction)) {
+                        this.transactionPool.addTransaction(data.transaction);
+                        this.broadcastTransaction(data.transaction);
+                    }
+                    break;
+            }
         });
     }
 
@@ -83,7 +101,10 @@ class P2pServer {
      * @param socket
      */
     sendChain(socket) {
-        socket.send(JSON.stringify({chain: this.blockchain.chain}));
+        socket.send(JSON.stringify({
+            type: MESSAGE_TYPES.chain,
+            chain: this.blockchain.chain
+        }));
     }
 
     /**
@@ -93,6 +114,21 @@ class P2pServer {
         this.nodes.forEach(node => {
             this.sendChain(node);
         });
+    }
+
+    broadcastTransaction(transaction) {
+        this.nodes.forEach(node => {
+            this.sendTransaction(node, transaction);
+        });
+    }
+
+
+    sendTransaction(socket, transaction) {
+        socket.send(JSON.stringify({
+                type: MESSAGE_TYPES.transaction,
+                transaction: transaction
+            })
+        );
     }
 
 }
