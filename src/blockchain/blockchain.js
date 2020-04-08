@@ -3,6 +3,12 @@ const Account = require("./account");
 const Stake = require("./stake");
 const Validators = require("./validators");
 
+const TRANSACTION_TYPES = {
+    transaction: "TRANSACTION",
+    stake: "STAKE",
+    validator: "VALIDATOR"
+};
+
 class Blockchain {
     constructor() {
         this.chain = [Block.genesis()];
@@ -14,11 +20,10 @@ class Blockchain {
     /**
      * Add block to the chain (received from other nodes)
      *
-     * @param data
+     * @param block
      * @returns {Block}
      */
-    addBlock(data) {
-        const block = Block.createBlock(this.chain[this.chain.length - 1], data);
+    addBlock(block) {
         this.chain.push(block);
 
         return block;
@@ -101,6 +106,68 @@ class Blockchain {
      */
     getLeader() {
         return this.stake.getLeader(this.validators.list);
+    }
+
+    /**
+     * Check if block is valid
+     *
+     * @param block
+     * @returns {boolean}
+     */
+    isValidBlock(block) {
+        const lastBlock = this.chain[this.chain.length - 1];
+        /**
+         * check hash
+         * check last hash
+         * check signature
+         * check leader
+         */
+        if (
+            block.lastHash === lastBlock.hash &&
+            block.hash === Block.blockHash(block) &&
+            Block.verifyBlock(block) &&
+            Block.verifyLeader(block, this.getLeader())
+        ) {
+            console.log("block valid");
+            this.addBlock(block);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Execute block transactions and update chain state
+     *
+     * @param block
+     */
+    executeTransactions(block) {
+        block.data.forEach(transaction => {
+            switch (transaction.type) {
+                case TRANSACTION_TYPES.transaction:
+                    this.account.update(transaction);
+                    this.account.transferFee(block, transaction);
+                    break;
+                case TRANSACTION_TYPES.stake:
+                    this.stake.update(transaction);
+                    this.account.decrement(
+                        transaction.input.from,
+                        transaction.output.amount
+                    );
+                    this.account.transferFee(block, transaction);
+
+                    break;
+                case TRANSACTION_TYPES.validator:
+                    if (this.validators.update(transaction)) {
+                        this.account.decrement(
+                            transaction.input.from,
+                            transaction.output.amount
+                        );
+                        this.account.transferFee(block, transaction);
+                    }
+                    break;
+            }
+        });
     }
 }
 

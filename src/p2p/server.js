@@ -87,10 +87,16 @@ class P2pServer {
                     this.blockchain.replaceChain(data.chain);
                     break;
 
+                case MESSAGE_TYPES.block:
+                    if (this.blockchain.isValidBlock(data.block)) {
+                        this.broadcastBlock(data.block, socket);
+                    }
+                    break;
+
                 case MESSAGE_TYPES.transaction:
                     if (!this.transactionPool.transactionExists(data.transaction)) {
                         let thresholdReached = this.transactionPool.addTransaction(data.transaction);
-                        this.broadcastTransaction(data.transaction);
+                        this.broadcastTransaction(data.transaction, socket);
 
                         if (thresholdReached) {
                             if (this.blockchain.getLeader() === this.wallet.getPublicKey()) {
@@ -99,7 +105,7 @@ class P2pServer {
                                     this.transactionPool.transactions,
                                     this.wallet
                                 );
-                                this.broadcastBlock(block);
+                                this.broadcastBlock(block, socket);
                             }
                         }
                     }
@@ -129,9 +135,11 @@ class P2pServer {
         });
     }
 
-    broadcastTransaction(transaction) {
+    broadcastTransaction(transaction, except_node = null) {
         this.nodes.forEach(node => {
-            this.sendTransaction(node, transaction);
+            if (node !== except_node){
+                this.sendTransaction(node, transaction);
+            }
         });
     }
 
@@ -144,9 +152,11 @@ class P2pServer {
         );
     }
 
-    broadcastBlock(block) {
-        this.nodes.forEach(socket => {
-            this.sendBlock(socket, block);
+    broadcastBlock(block, except_node = null) {
+        this.nodes.forEach(node => {
+            if (node !== except_node) {
+                this.sendBlock(node, block);
+            }
         });
     }
 
