@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const P2pserver = require("../src/p2p/server");
 const Wallet = require("../src/wallet/wallet");
 const TransactionPool = require("../src/wallet/transaction-pool");
-const { TRANSACTION_THRESHOLD } = require("../src/config");
+const { TRANSACTION_THRESHOLD } = require("../config");
 
 const HTTP_PORT = 3000;
 

@@ -1,5 +1,5 @@
 const Helper = require("../helpers/helper");
-const {TRANSACTION_FEE} = require("../config");
+const {TRANSACTION_FEE} = require("../../config");
 
 class Transaction {
     constructor() {

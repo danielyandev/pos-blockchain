@@ -1,5 +1,5 @@
 const Transaction = require("./transaction");
-const {TRANSACTIONS_PER_BLOCK} = require("../config");
+const {TRANSACTIONS_PER_BLOCK} = require("../../config");
 
 class TransactionPool {
     constructor() {

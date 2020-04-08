@@ -1,4 +1,4 @@
-const {INITIAL_COINS} = require("../config");
+const {INITIAL_COINS} = require("../../config");
 
 class Account {
     constructor() {

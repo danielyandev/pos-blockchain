@@ -1,4 +1,4 @@
-const {VALIDATORS_FEE} = require("../config");
+const {VALIDATORS_FEE} = require("../../config");
 
 class Validators {
     constructor() {
