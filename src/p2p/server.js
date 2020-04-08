@@ -90,6 +90,7 @@ class P2pServer {
                     console.log('block received')
                     if (this.blockchain.isValidBlock(data.block)) {
                         this.broadcastBlock(data.block);
+                        this.transactionPool.clear();
                     }
                     break;
 
