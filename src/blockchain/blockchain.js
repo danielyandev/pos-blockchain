@@ -171,6 +171,16 @@ class Blockchain {
             }
         });
     }
+
+    /**
+     * Check if block is the last in chain
+     *
+     * @param block
+     * @returns {boolean}
+     */
+    isLastBlock(block) {
+        return this.chain[this.chain.length -1].hash === block.hash
+    }
 }
 
 module.exports = Blockchain;

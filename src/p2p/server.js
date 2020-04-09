@@ -83,32 +83,15 @@ class P2pServer {
             const data = JSON.parse(message);
             switch (data.type) {
                 case MESSAGE_TYPES.chain:
-                    this.blockchain.replaceChain(data.chain);
+                    this.handleReceivedChain(data.chain)
                     break;
 
                 case MESSAGE_TYPES.block:
-                    console.log('block received')
-                    if (this.blockchain.isValidBlock(data.block)) {
-                        this.broadcastBlock(data.block);
-                        this.transactionPool.clear();
-                    }
+                    this.handleReceivedBlock(data.block)
                     break;
 
                 case MESSAGE_TYPES.transaction:
-                    if (!this.transactionPool.transactionExists(data.transaction)) {
-                        this.transactionPool.addTransaction(data.transaction);
-                        this.broadcastTransaction(data.transaction);
-                    }
-                    if (this.transactionPool.thresholdReached()) {
-                        if (this.blockchain.getLeader() === this.wallet.getPublicKey()) {
-                            console.log("Creating block");
-                            let block = this.blockchain.createBlock(
-                                this.transactionPool.transactions,
-                                this.wallet
-                            );
-                            this.broadcastBlock(block);
-                        }
-                    }
+                    this.handleReceivedTransaction(data.transaction)
                     break;
             }
         });
@@ -135,13 +118,23 @@ class P2pServer {
         });
     }
 
+    /**
+     * Send transaction to other nodes
+     *
+     * @param transaction
+     */
     broadcastTransaction(transaction) {
         this.nodes.forEach(node => {
             this.sendTransaction(node, transaction);
         });
     }
 
-
+    /**
+     * Send transaction to given node
+     *
+     * @param socket
+     * @param transaction
+     */
     sendTransaction(socket, transaction) {
         socket.send(JSON.stringify({
                 type: MESSAGE_TYPES.transaction,
@@ -150,12 +143,23 @@ class P2pServer {
         );
     }
 
+    /**
+     * Send block to other nodes
+     *
+     * @param block
+     */
     broadcastBlock(block) {
         this.nodes.forEach(node => {
             this.sendBlock(node, block);
         });
     }
 
+    /**
+     * Send block to given node
+     *
+     * @param socket
+     * @param block
+     */
     sendBlock(socket, block) {
         socket.send(
             JSON.stringify({
@@ -163,6 +167,53 @@ class P2pServer {
                 block: block
             })
         );
+    }
+
+    /**
+     *
+     * @param chain
+     */
+    handleReceivedChain(chain) {
+        this.blockchain.replaceChain(chain);
+    }
+
+    /**
+     *
+     * @param block
+     */
+    handleReceivedBlock(block) {
+        // check if received block is not the last in chain,
+        // if it's the last one, then it's already broadcasted
+        if (!this.blockchain.isLastBlock(block)){
+            console.log('new block received')
+            if (this.blockchain.isValidBlock(block)) {
+                this.broadcastBlock(block);
+                this.transactionPool.clear();
+            }
+        }
+    }
+
+    /**
+     *
+     * @param transaction
+     */
+    handleReceivedTransaction(transaction) {
+        // add and broadcast transaction if it's not exist in pool
+        if (!this.transactionPool.transactionExists(transaction)) {
+            this.transactionPool.addTransaction(transaction);
+            this.broadcastTransaction(transaction);
+        }
+        // create and broadcast block if leader and threshold reached
+        if (this.transactionPool.thresholdReached()) {
+            if (this.blockchain.getLeader() === this.wallet.getPublicKey()) {
+                console.log("Creating block");
+                let block = this.blockchain.createBlock(
+                    this.transactionPool.transactions,
+                    this.wallet
+                );
+                this.broadcastBlock(block);
+            }
+        }
     }
 
 }
