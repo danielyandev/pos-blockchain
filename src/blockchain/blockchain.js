@@ -88,6 +88,15 @@ class Blockchain {
 
         console.log("Replacing the current chain with new chain");
         this.chain = newChain;
+        this.executeChain()
+    }
+
+    /**
+     * Execute all blocks transactions
+     */
+    executeChain() {
+        console.log('executing chain')
+        this.chain.forEach(block => this.executeTransactions(block))
     }
 
     /**
