@@ -137,7 +137,6 @@ class Blockchain {
             Block.verifyLeader(block, this.getLeader())
         ) {
             console.log("Block is valid");
-            this.addBlock(block);
             return true;
         } else {
             console.log("Block is invalid")

@@ -219,6 +219,7 @@ class P2pServer {
         if (!this.blockchain.isLastBlock(block)){
             console.log('New block received')
             if (this.blockchain.isValidBlock(block)) {
+                this.blockchain.addBlock(block);
                 this.broadcastBlock(block);
                 this.transactionPool.clear();
             }
