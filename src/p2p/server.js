@@ -48,7 +48,7 @@ class P2pServer {
         // handle close and error methods in connection to reach
         // all further connected nodes events
         socket.on('close', (event) => this.disconnectNode(event, socket));
-        socket.on('error', () => this.errorOnNode(socket));
+        socket.on('error', (error) => this.errorOnNode(error, socket));
 
         console.log("Node connected");
 
@@ -80,10 +80,12 @@ class P2pServer {
     /**
      * Handle node error
      *
+     * @param error
      * @param socket
      */
-    errorOnNode(socket) {
+    errorOnNode(error, socket) {
         console.log('Error on socket')
+        console.log(error)
     }
 
     /**
@@ -97,6 +99,8 @@ class P2pServer {
             // create a socket for each peer
             const socket = new WebSocket(peer);
 
+            socket.on('close', (event) => this.disconnectNode(event, socket));
+            socket.on('error', (error) => this.errorOnNode(error, socket));
             // open event listener is emitted when a connection is established
             // saving the socket in the array
             socket.on('open', () => this.connectNode(socket));
