@@ -54,8 +54,6 @@ class Blockchain {
     isValidChain(chain) {
         if (JSON.stringify(chain[0]) !== JSON.stringify(Block.genesis())){
             console.log('Genesis does not match')
-            console.log(JSON.stringify(chain[0]))
-            console.log(Block.genesis())
             return false;
         }
 
@@ -95,7 +93,7 @@ class Blockchain {
      * Execute all blocks transactions
      */
     executeChain() {
-        console.log('executing chain')
+        console.log('Executing chain')
         this.chain.forEach(block => this.executeTransactions(block))
     }
 
@@ -138,11 +136,11 @@ class Blockchain {
             Block.verifyBlock(block) &&
             Block.verifyLeader(block, this.getLeader())
         ) {
-            console.log("block valid");
+            console.log("Block is valid");
             this.addBlock(block);
             return true;
         } else {
-            console.log("block invalid")
+            console.log("Block is invalid")
             return false;
         }
     }

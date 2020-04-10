@@ -45,13 +45,45 @@ class P2pServer {
      * @param socket
      */
     connectNode(socket) {
-        this.nodes.push(socket);
+        // handle close and error methods in connection to reach
+        // all further connected nodes events
+        socket.on('close', (event) => this.disconnectNode(event, socket));
+        socket.on('error', () => this.errorOnNode(socket));
+
         console.log("Node connected");
 
+        this.nodes.push(socket);
         // register a message event listener to the node
         this.messageHandler(socket);
         // on new connection send the blockchain chain to the peer
         this.sendChain(socket)
+    }
+
+    /**
+     * Remove node from active nodes
+     *
+     * @param event
+     * @param socket
+     */
+    disconnectNode(event, socket) {
+        console.log("Node disconnected");
+        if (event.wasClean) {
+            console.log(`Socket connection was closed clean, code=${event.code} reason=${event.reason}`);
+        } else {
+            // server killed process or there were network error
+            // mostly event.code 1006
+            console.log(`Socket connection was dropped, code=${event.code}`);
+        }
+        this.nodes = this.nodes.filter(node => node !== socket)
+    }
+
+    /**
+     * Handle node error
+     *
+     * @param socket
+     */
+    errorOnNode(socket) {
+        console.log('Error on socket')
     }
 
     /**
@@ -185,7 +217,7 @@ class P2pServer {
         // check if received block is not the last in chain,
         // if it's the last one, then it's already broadcasted
         if (!this.blockchain.isLastBlock(block)){
-            console.log('new block received')
+            console.log('New block received')
             if (this.blockchain.isValidBlock(block)) {
                 this.broadcastBlock(block);
                 this.transactionPool.clear();

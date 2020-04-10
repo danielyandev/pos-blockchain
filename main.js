@@ -83,5 +83,5 @@ app.get("/public-key", (req, res) => {
 });
 
 app.listen(HTTP_PORT, () => {
-    console.log(`listening on port ${HTTP_PORT}`);
+    console.log(`Listening on port ${HTTP_PORT}`);
 })

@@ -9,7 +9,7 @@ class Validators {
 
     update(transaction) {
         if (transaction.output.amount >= VALIDATORS_FEE && transaction.output.to == "0") {
-            console.log('new validator added')
+            console.log('New validator added')
             this.list.push(transaction.input.from);
             return true;
         }
