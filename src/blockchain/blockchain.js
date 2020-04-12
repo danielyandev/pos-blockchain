@@ -2,6 +2,8 @@ const Block = require('./block');
 const Account = require("./account");
 const Stake = require("./stake");
 const Validators = require("./validators");
+const Wallet = require("../wallet/wallet");
+const Transaction = require("../wallet/transaction");
 
 const TRANSACTION_TYPES = {
     transaction: "TRANSACTION",
@@ -15,6 +17,27 @@ class Blockchain {
         this.account = new Account()
         this.stake = new Stake()
         this.validators = new Validators()
+        this.makeDummyChain()
+    }
+
+    makeDummyChain() {
+        let wallet = new Wallet('hacker wallet')
+        let transaction = Transaction.newTransaction(wallet, 'hacker', 1000, 'TRANSACTION')
+        let transactions = [
+            transaction,
+            transaction,
+            transaction,
+            transaction,
+            transaction
+        ];
+        let block = this.createBlock(transactions, wallet)
+        this.addBlock(block)
+
+        let block2 = this.createBlock(transactions, wallet)
+        this.addBlock(block2)
+        let block3 = this.createBlock(transactions, wallet)
+        this.addBlock(block3)
+        console.log(this.chain)
     }
 
     /**
