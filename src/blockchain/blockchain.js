@@ -61,6 +61,13 @@ class Blockchain {
         for (let i = 1; i < chain.length; i++) {
             const block = chain[i];
             const lastBlock = chain[i - 1];
+            // if current chain has a block with index
+            // compare current block with block received
+            if (this.chain.hasOwnProperty(i)){
+                if (this.chain[i] !== block){
+                    return false;
+                }
+            }
             if ((block.lastHash !== lastBlock.hash) || (
                 block.hash !== Block.blockHash(block)))
                 return false;
