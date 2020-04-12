@@ -64,6 +64,8 @@ class Blockchain {
             // if current chain has a block with index
             // compare current block with block received
             if (this.chain.hasOwnProperty(i)){
+                console.log(this.chain[i])
+                console.log(block)
                 if (this.chain[i] !== block){
                     return false;
                 }
