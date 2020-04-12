@@ -3,7 +3,7 @@ const Transaction = require("./transaction");
 
 class Wallet {
     constructor(secret) {
-        this.balance = 100;
+        this.balance = 0;
         this.keyPair = Helper.generateKeyPair(secret);
         this.publicKey = this.keyPair.getPublic("hex");
     }
@@ -32,7 +32,7 @@ class Wallet {
      * @param type
      * @param blockchain
      * @param transactionPool
-     * @returns {undefined|Transaction}
+     * @returns {boolean|Transaction}
      */
     createTransaction(to, amount, type, blockchain, transactionPool) {
         this.balance = this.getBalance(blockchain);
@@ -40,7 +40,7 @@ class Wallet {
             console.log(
                 `Amount: ${amount} exceeds the current balance: ${this.balance}`
             );
-            return;
+            return false;
         }
 
         let transaction = Transaction.newTransaction(this, to, amount, type);

@@ -20,7 +20,7 @@ class Transaction {
     static newTransaction(senderWallet, to, amount, type) {
         if (amount + TRANSACTION_FEE > senderWallet.balance) {
             console.log('Not enough balance');
-            return;
+            return false;
         }
 
         return Transaction.generateTransaction(senderWallet, to, amount, type);
