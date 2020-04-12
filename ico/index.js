@@ -35,12 +35,12 @@ app.post("/ico/transact", (req, res) => {
         blockchain,
         transactionPool
     );
-    p2pserver.broadcastTransaction(transaction);
-    if (transactionPool.transactions.length >= TRANSACTION_THRESHOLD) {
-        let block = blockchain.createBlock(transactionPool.transactions, wallet);
-        p2pserver.broadcastBlock(block);
+    if (transaction){
+        p2pserver.broadcastTransaction(transaction);
+        res.json(transaction);
+    }else{
+        res.json({"error": "Transaction was not transfered"})
     }
-    res.redirect("/ico/transactions");
 });
 
 app.get("/ico/public-key", (req, res) => {

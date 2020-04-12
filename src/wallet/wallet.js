@@ -44,8 +44,8 @@ class Wallet {
         }
 
         let transaction = Transaction.newTransaction(this, to, amount, type);
-        transactionPool.addTransaction(transaction);
-        return transaction;
+        let added = transactionPool.addTransaction(transaction);
+        return added ? transaction : false;
     }
 
     /**

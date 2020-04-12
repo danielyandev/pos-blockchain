@@ -13,9 +13,12 @@ class TransactionPool {
      * @returns {boolean}
      */
     addTransaction(transaction) {
-        this.transactions.push(transaction);
-        return this.thresholdReached();
+        if (Transaction.isValid(transaction)){
+            this.transactions.push(transaction);
+            return true
+        }
 
+        return false
     }
 
     /**

@@ -76,6 +76,10 @@ class Transaction {
             Helper.hash(transaction.output)
         );
     }
+
+    static isValid(transaction) {
+        return this.verifyTransaction(transaction)
+    }
 }
 
 module.exports = Transaction;

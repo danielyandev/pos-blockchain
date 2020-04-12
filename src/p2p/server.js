@@ -6,6 +6,8 @@ const P2P_PORT = process.env.P2P_PORT || 5000;
 // list of address to connect to
 const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
 
+const Transaction = require('../wallet/transaction')
+
 const MESSAGE_TYPES = {
     chain: 'CHAIN',
     block: 'BLOCK',
@@ -237,8 +239,10 @@ class P2pServer {
     handleReceivedTransaction(transaction) {
         // add and broadcast transaction if it's not exist in pool
         if (!this.transactionPool.transactionExists(transaction)) {
-            this.transactionPool.addTransaction(transaction);
-            this.broadcastTransaction(transaction);
+            let added = this.transactionPool.addTransaction(transaction);
+            if (added){
+                this.broadcastTransaction(transaction);
+            }
         }
         // create and broadcast block if leader and threshold reached
         if (this.transactionPool.thresholdReached()) {
